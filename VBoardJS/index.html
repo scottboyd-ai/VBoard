@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Swype-JS Keyboard Emulator</title>
+  
+  <!-- Helpers -->
+  <script src='helpers/inheritance.js'></script>
+  <script src='helpers/EventHelper.js'></script>
+
+  <!-- Hierarchical models -->
+  <script src='models/Exportable.js'></script>
+    <script src='models/Observable.js'></script>
+      <script src='models/GraphicalGroup.js'></script>
+      <script src='models/Layer.js'></script>
+      <script src='models/Mouse.js'></script>
+      <script src='models/Draggable.js'></script>
+        <script src='models/Graphical.js'></script>
+          <script src='models/GraphicalCoordinate.js'></script>
+          <script src='models/DragField.js'></script>
+          <script src='models/Text.js'></script>
+          <script src='models/Shape.js'></script>
+            <script src='models/Rectangle.js'></script>
+              <script src='models/FilledRectangle.js'></script>
+                <script src='models/Key.js'></script>
+
+  <!-- Scenes -->
+  <script src='models/Scene.js'></script>
+    <script src='models/KeyboardScene.js'></script>
+  
+  <!-- App -->
+  <script src='SwypeApp.js'></script>
+</head>
+<body>
+<style>
+  body {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  canvas {
+    margin: 0px;
+    padding: 0px;
+    border: thin solid black;
+    background: #EEE;
+  }
+</style>
+<script>
+window.onload = function(){
+  document.getElementById("canvas").width=window.innerWidth;
+  document.getElementById("canvas").height=(window.innerWidth/768)*292;
+  if(document.getElementById("canvas").getContext){
+    // Startup App
+    var App = new SwypeApp(
+      document.getElementById("canvas")
+    );
+    App.loadScene(new KeyboardScene());
+    App.run();
+  }else{
+    // Show error
+    alert("Error, could not load Swype app");
+  }
+};
+</script>
+<canvas id="canvas" width="768" height="292"></canvas>
+<textarea cols='30' rows='5' id='log'></textarea>
+</body>
+</html>
