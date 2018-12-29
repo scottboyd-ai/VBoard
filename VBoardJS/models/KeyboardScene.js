@@ -32,7 +32,7 @@ function KeyboardScene() {
         field.setWidth(app.getWidth());
         field.setHeight(app.getHeight());
         field.listen("onTrackEnd", function (e) {
-            document.getElementById("log").innerHTML = e.track.join("\n");
+            document.getElementById("log").innerHTML = e.track.join("");
         });
         drawlayer.add(field);
     }
