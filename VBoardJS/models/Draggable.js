@@ -7,14 +7,14 @@ function Draggable(){
   var _dragTriggerActive = false, _dragging = false, _draggable = true;
   var _draggedOver = null;
 
-  this.getDraggedOver = function(){ return _draggedOver; }
+  this.getDraggedOver = function(){ return _draggedOver; };
   
-  this.getDraggable = function(){ return _draggable; }
+  this.getDraggable = function(){ return _draggable; };
   this.setDraggable = function(draggable){
     _draggable = draggable;
-  }
+  };
 
-  this.isDragging = function(){ return _dragging; }
+  this.isDragging = function(){ return _dragging; };
 
   this.onMouseOver = function(e){return true; };
 
@@ -23,7 +23,7 @@ function Draggable(){
     // to trigger dragging
     if(this.getDraggable())
       _dragTriggerActive = true;
-  }
+  };
   
   this.onMouseUp = function(e){
     // Stop waiting for movement
@@ -40,7 +40,7 @@ function Draggable(){
       }
       this.onDragEnd(e);
     }
-  }
+  };
 
   this.onMouseMove = function(e){
     // If we were waiting for
@@ -59,11 +59,11 @@ function Draggable(){
       this.getLayer().getApplication()
         .getCanvas().style.cursor = "default";
     }
-  }
+  };
 
   this.onMouseOut = function(e){
     this.onMouseUp(e);
-  }
+  };
 
   this.onDragStart = function(e){
     var object = e.draggedObject;
@@ -72,18 +72,18 @@ function Draggable(){
       _dragListeners[_dragListeners.length] = mouse.listen("onMouseMove", function(e){
         e.draggedObject = object;
         object.onDrag(e);
-      })
+      });
       
       _dragListeners[_dragListeners.length] = mouse.listen("onMouseUp", function(e){
         e.draggedObject = object;
         object.onMouseUp(e);
       })
     }
-  }
+  };
 
   this.onDrag = function(e){
     e.bubble = true;
-  }
+  };
   
   this.onDraggedOver = function(draggedOver){
     if(
@@ -94,7 +94,7 @@ function Draggable(){
       _draggedOver.onDragOut(this);
     }
     _draggedOver = draggedOver;
-  }
+  };
 
   this.onDragEnd = function(e){
     var mouse = this.getLayer().getApplication().getMouse();
@@ -102,7 +102,7 @@ function Draggable(){
       mouse.unlisten(_dragListeners[i]);
     }
     _draggedOver = null;
-    _dragListeners = new Array();
+    _dragListeners = [];
   }
 
 }

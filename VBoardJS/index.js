@@ -1,6 +1,8 @@
 'use strict';
 
 const Hapi = require('hapi');
+const BKTree = require('./helpers/bktree');
+const fs = require('fs');
 
 //Use this server config to host it locally so you can access the project from other devices
 const server = Hapi.server({
@@ -16,15 +18,27 @@ const server = Hapi.server({
 
 const init = async () =>{
 
+  let terms = await JSON.parse(fs.readFileSync('./VBoardJS/dict/20k.json', 'utf8'));
+  let tree = new BKTree(terms);
+
   await server.register(require('inert'));
 
   server.route({
     method: 'GET',
     path: '/',
-    handler: (request, h) =>{
+    handler: async (request, h) =>{
       return h.file('./VBoardJS/index.html');
     }
   });
+
+  server.route({
+    method: 'POST',
+    path: '/analyze',
+    handler: async (request, h) => {
+      return await tree.query(JSON.parse(request.payload).letters);
+    }
+  });
+
   server.route({
     method: 'GET',
     path: '/SwypeApp.js',

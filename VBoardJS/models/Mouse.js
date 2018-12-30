@@ -106,7 +106,6 @@ function Mouse(area){
     element: _area,
     on: "mouseup",
     callback: function(e){
-      document.getElementById("mobilelog").innerHTML += 'mouseup\n';
       _self.onMouseUp(e)
     }
   });
@@ -115,7 +114,6 @@ function Mouse(area){
     element: _area,
     on: "touchend",
     callback: function(e){
-      document.getElementById("mobilelog").innerHTML += 'touchend\n';
       _self.onTouchEnd(e)
     }
   });
@@ -124,7 +122,6 @@ function Mouse(area){
     element: _area,
     on: "mousedown",
     callback: function(e){
-      document.getElementById("mobilelog").innerHTML += 'mousedown\n';
       _self.onMouseDown(e)
     }
   });
@@ -133,7 +130,6 @@ function Mouse(area){
     element: _area,
     on: "touchstart",
     callback: function(e){
-      document.getElementById("mobilelog").innerHTML += 'touchstart\n';
       _self.onTouchStart(e)
     }
   });
@@ -158,7 +154,6 @@ function Mouse(area){
     element: _area,
     on: "mouseout",
     callback: function(e){
-      document.getElementById("mobilelog").innerHTML += 'mouseout\n';
       _self.onMouseOut(e)
     }
   });

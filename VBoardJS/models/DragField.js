@@ -28,7 +28,6 @@ function DragField(){
         currentChar = _dragpoint.getDraggedOver().getCharacter();
         if (currentChar !== lastChar) {
           lastChar = currentChar;
-          currentChar += '\n';
         } else {
           currentChar = '';
         }
