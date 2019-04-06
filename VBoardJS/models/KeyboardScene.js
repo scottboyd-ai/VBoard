@@ -13,27 +13,43 @@ function KeyboardScene(){
     }
   }
 
-  this.load = function(app){
+  this.load = async function(app){
     _parent.load.call(this, app);
     // Key scale (1 == 31px x 31px)
     let scale = app.getCanvas().width / 650;
 
-    // Outer ring of characters
-    let characters = ["y", "f", "j", "x", "o", "c", "_", "b", "z", "k", "q", "p"];
-    for (let i = 0; i < characters.length; i++) {
-      this.mapKey(app, characters[i], characters.length, i, scale, "", "", 3);
+    const test = window.location.search.includes('test');
+    let path = '/characters';
+    if(test){
+      path += '?test';
+    }
+
+    let characters = await fetch(path, {
+      method: 'GET'
+    }).then(response => {
+      return response.json();
+    }).then(data => {return data});
+
+
+      // Outer ring of characters
+    // characters = ["y", "f", "j", "x", "o", "c", "_", "b", "z", "k", "q", "p"];
+    const outerRing = characters[0];
+    for (let i = 0; i < outerRing.length; i++) {
+      this.mapKey(app, outerRing[i], outerRing.length, i, scale, "", "", 3);
     }
     // // Middle circle of characters
-    characters = ["g", "h", "v", "d", "w", "m", "u", "l", "r"];
+    // characters = ["g", "h", "v", "d", "w", "m", "u", "l", "r"];
+    const middleRing = characters[1];
     scale = app.getCanvas().width / 700;
-    for (let i = 0; i < characters.length; i++) {
-      this.mapKey(app, characters[i], characters.length, i, scale, "", "", 2);
+    for (let i = 0; i < middleRing.length; i++) {
+      this.mapKey(app, middleRing[i], middleRing.length, i, scale, "", "", 2);
     }
     // Bottom row of characters
-    characters = ["t", "i", "n", "a", "s", "e"];
+    // characters = ["t", "i", "n", "a", "s", "e"];
+    const innerRing = characters[2];
     scale = app.getCanvas().width / 800;
-    for (let i = 0; i < characters.length; i++) {
-      this.mapKey(app, characters[i], characters.length, i, scale, "", "", 1);
+    for (let i = 0; i < innerRing.length; i++) {
+      this.mapKey(app, innerRing[i], innerRing.length, i, scale, "", "", 1);
     }
     drawlayer = new Layer(app, app.getFloorLayer());
     field = new DragField();

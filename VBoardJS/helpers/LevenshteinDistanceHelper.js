@@ -1,38 +1,38 @@
+const charHelper = require('./charactersHelper');
 module.exports = {
-  neighbors: {},
+  neighbors: charHelper.getNeighbors(),
   initNeighbors: function(){
-    this.neighbors = {
-      A: "SNWM",
-      B: "_MUZ",
-      C: "ODW_",
-      D: "VXOCWN",
-      E: "RTSL",
-      F: "YGHJ",
-      G: "YFHITERP",
-      H: "YFJVITG",
-      I: "THVN",
-      J: "FHVX",
-      K: "ZULQ",
-      L: "QRESUK",
-      M: "SAW_BU",
-      N: "IVDWA",
-      O: "XDWC",
-      P: "QRGY",
-      Q: "KLRP",
-      R: "PYGTELQ",
-      S: "EAMUL",
-      T: "GHIER",
-      U: "LSMBZK",
-      V: "HJXDNI",
-      W: "NDC_MA",
-      X: "JVDO",
-      Y: "PGFRH",
-      Z: "BMUK",
-      "_": "CWMB"
-    };
+    // this.neighbors = {
+    //   A: "SNWM",
+    //   B: "_MUZ",
+    //   C: "ODW_",
+    //   D: "VXOCWN",
+    //   E: "RTSL",
+    //   F: "YGHJ",
+    //   G: "YFHITERP",
+    //   H: "YFJVITG",
+    //   I: "THVN",
+    //   J: "FHVX",
+    //   K: "ZULQ",
+    //   L: "QRESUK",
+    //   M: "SAW_BU",
+    //   N: "IVDWA",
+    //   O: "XDWC",
+    //   P: "QRGY",
+    //   Q: "KLRP",
+    //   R: "PYGTELQ",
+    //   S: "EAMUL",
+    //   T: "GHIER",
+    //   U: "LSMBZK",
+    //   V: "HJXDNI",
+    //   W: "NDC_MA",
+    //   X: "JVDO",
+    //   Y: "PGFRH",
+    //   Z: "BMUK",
+    //   "_": "CWMB"
+    // };
   },
   getDistance: function(__this, that){
-    this.initNeighbors();
     const thisLength = __this.word.length;
     let thatLength;
     if (that.word) {
@@ -71,7 +71,6 @@ module.exports = {
     let j, this_i, that_j, cost, min, t;
     for (let i = 1; i <= thisLength; ++i) {
       this_i = __this[i - 1];
-
       // Step 4
       for (j = 1; j <= thatLength; ++j) {
         // Check the jagged ld total so far

@@ -64,14 +64,10 @@ BKTree.prototype._matchLetters = function(queryTerm){
 //   let firstNeighbor = lDist.neighbors[localQueryTerm[0]].includes(localTermWord[0]);
 //   let lastNeighbor = lDist.neighbors[localQueryTerm[localQueryTerm.length - 1]].includes(localTermWord[localTermWord.length - 1]);
 //
-//   console.log('first: ' + firstNeighbor);
-//   console.log('last: ' + lastNeighbor);
 //   return firstNeighbor || lastNeighbor;
 // };
 
 BKTree.prototype._query = function(queryTerm, maxDist, d, results){
-  // console.log('queryTerm: ' + queryTerm);
-  // console.log('term: ' + this.term.word);
   let dist = lDist.getDistance(this.term, queryTerm);
   // dist += this._matchLetters(queryTerm) ? 0 : 1;
   // dist += this._matchNeighbors(queryTerm) ? -2 : 0;

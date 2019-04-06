@@ -20,6 +20,7 @@ const init = async () =>{
 
   let terms = await JSON.parse(fs.readFileSync('./VBoardJS/dict/20k.json', 'utf8'));
   let tree = new BKTree(terms);
+  const charactersHelper = require('./helpers/charactersHelper');
 
   await server.register(require('inert'));
 
@@ -34,8 +35,16 @@ const init = async () =>{
   server.route({
     method: 'POST',
     path: '/analyze',
-    handler: async (request, h) => {
+    handler: async (request, h) =>{
       return await tree.query(JSON.parse(request.payload).letters);
+    }
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/characters',
+    handler: async (request, h) =>{
+      return await charactersHelper.getCharacters(request.query.test);
     }
   });
 
