@@ -7,6 +7,7 @@ function DragField(){
   _draglayer = null;
   _dragtrack = [];
   _dragcoords = [];
+  _lastChar = null;
 
   this.setLayer = function(layer){
     _parent.setLayer(layer);
@@ -14,38 +15,45 @@ function DragField(){
   };
 
   this.onDragStart = function(e){
+    _parent.onDragStart.call(this, e);
     _dragpoint = new GraphicalCoordinate(e.canvasX, e.canvasY);
-    _dragpoint.listen("onDragEnd", function(e){
-      _draglayer.remove(_dragpoint);
-      _dragpoint = null;
-    });
-    let lastChar;
-    let currentChar;
-    _dragpoint.listen("onDrag", function(e){
-      if (_dragpoint.getDraggedOver() != null && _dragpoint.getDraggedOver().className === "Key") {
-        //Old track log for diagnostics
-        // _dragtrack.push(+_dragtrack.length + "," + e.canvasX + "," + e.canvasY + "," + _dragpoint.getDraggedOver().getCharacter());
-        currentChar = _dragpoint.getDraggedOver().getCharacter();
-        if (currentChar !== lastChar) {
-          lastChar = currentChar;
-        } else {
-          currentChar = '';
-        }
-        _dragtrack.push(currentChar);
-        _dragcoords.push([e.canvasX, e.canvasY]);
-      }
-    });
+    _dragpoint.setDraggable(false);
     _draglayer.add(_dragpoint);
-    _dragpoint.onDragStart(e);
-    _dragpoint.onDrag(e);
+    _lastChar = null;
   };
 
   this.onDrag = function(e){
-    _dragpoint.onDrag(e);
+    if (_dragpoint == null) {
+      return;
+    }
+
+    _dragpoint.setX(e.canvasX);
+    _dragpoint.setY(e.canvasY);
+    this.getLayer().getApplication()
+      .getCanvas().style.cursor = "move";
+    e.bubble = true;
+    this.getLayer().getApplication().onEvent(e, "onDragOver");
+    this.getLayer().getBottomLayer().repaint();
+
+    if (this.getDraggedOver() != null && this.getDraggedOver().className === "Key") {
+      let currentChar = this.getDraggedOver().getCharacter();
+      if (currentChar === _lastChar) {
+        currentChar = '';
+      } else {
+        _lastChar = currentChar;
+      }
+      _dragtrack.push(currentChar);
+      _dragcoords.push([e.canvasX, e.canvasY]);
+    }
   };
 
   this.onDragEnd = function(e){
-    _dragpoint.onDragEnd(e);
+    if (_dragpoint != null) {
+      _draglayer.remove(_dragpoint);
+      _dragpoint = null;
+    }
+    _lastChar = null;
+    _parent.onDragEnd.call(this, e);
     this.tell("onTrackEnd", { "track": _dragtrack });
     _dragtrack = [];
     _dragcoords = [];

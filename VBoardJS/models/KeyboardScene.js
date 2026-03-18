@@ -4,6 +4,19 @@ function KeyboardScene(){
 
   const y_offset = 250;
   const x_offset = 300;
+  const apiBaseUrl = (() => {
+    if (window.location.protocol === 'file:') {
+      return 'http://localhost:3000';
+    }
+
+    const hostname = window.location.hostname || 'localhost';
+    const protocol = window.location.protocol || 'http:';
+    if (window.location.port === '3000') {
+      return window.location.origin;
+    }
+
+    return protocol + '//' + hostname + ':3000';
+  })();
 
   function displayResults(data){
     let element = document.getElementById("mobilelog");
@@ -19,7 +32,7 @@ function KeyboardScene(){
     let scale = app.getCanvas().width / 650;
 
     const test = window.location.search.includes('test');
-    let path = '/characters';
+    let path = apiBaseUrl + '/characters';
     if(test){
       path += '?test';
     }
@@ -61,13 +74,19 @@ function KeyboardScene(){
       * This is where word prediction needs to occur
       * */
       var letters = document.getElementById("log").innerHTML.trim();
-      fetch('/analyze', {
-        method: 'POST',
-        body: JSON.stringify({ 'letters': letters })
+      const analyzeUrl = new URL(apiBaseUrl + '/analyze');
+      analyzeUrl.searchParams.set('letters', letters);
+      fetch(analyzeUrl.toString(), {
+        method: 'GET'
       }).then(response =>{
+        if (!response.ok) {
+          throw new Error('Analyze request failed with status ' + response.status);
+        }
         return response.json();
       }).then(data =>{
         displayResults(data);
+      }).catch(error => {
+        document.getElementById("mobilelog").innerHTML = error.message;
       });
     });
     drawlayer.add(field);

@@ -4,6 +4,8 @@ function Mouse(area){
   this.className = "Mouse";
 
   let _area = area;
+  let _releaseTarget = window;
+  let _isPressed = false;
 
   this.getArea = function(){ return _area; };
 
@@ -33,9 +35,13 @@ function Mouse(area){
     if (e.pageX || e.pageY) {
       x = e.pageX;
       y = e.pageY;
-    } else {
+    } else if (typeof e.clientX === "number" && typeof e.clientY === "number") {
       x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
       y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    } else {
+      const currentPosition = this.getCurrentPosition();
+      x = currentPosition.x != null ? currentPosition.x + this.getArea().offsetLeft : 0;
+      y = currentPosition.y != null ? currentPosition.y + this.getArea().offsetTop : 0;
     }
     x -= this.getArea().offsetLeft;
     y -= this.getArea().offsetTop;
@@ -49,9 +55,13 @@ function Mouse(area){
     if (e.touches && e.touches[0] && (e.touches[0].pageX || e.touches[0].pageY)) {
       x = e.touches[0].pageX;
       y = e.touches[0].pageY;
-    } else {
+    } else if (e.changedTouches && e.changedTouches[0]) {
       x = e.changedTouches[0].clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
       y = e.changedTouches[0].clientY + document.body.scrollTop + document.documentElement.scrollTop;
+    } else {
+      const currentPosition = this.getCurrentPosition();
+      x = currentPosition.x != null ? currentPosition.x + this.getArea().offsetLeft : 0;
+      y = currentPosition.y != null ? currentPosition.y + this.getArea().offsetTop : 0;
     }
     x -= this.getArea().offsetLeft;
     y -= this.getArea().offsetTop;
@@ -61,16 +71,22 @@ function Mouse(area){
 
   // Event handlers
   this.onMouseUp = function(e){
+    _isPressed = false;
     this.addAreaPosition(e);
     e.mouse = this;
     this.tell("onMouseUp", e);
   };
   this.onMouseDown = function(e){
+    _isPressed = true;
     this.addAreaPosition(e);
     e.mouse = this;
     this.tell("onMouseDown", e);
   };
   this.onMouseMove = function(e){
+    if (_isPressed && typeof e.buttons === "number" && e.buttons === 0) {
+      this.onMouseUp(e);
+      return;
+    }
     this.addAreaPosition(e);
     this.updatePositionAndMove(e);
   };
@@ -81,6 +97,7 @@ function Mouse(area){
   };
 
   this.onTouchStart = function(e){
+    _isPressed = true;
     this.addTouchAreaPosition(e);
     e.mouse = this;
     this.tell('onMouseDown', e);
@@ -90,6 +107,7 @@ function Mouse(area){
     this.updatePositionAndMove(e);
   };
   this.onTouchEnd = function(e){
+    _isPressed = false;
     this.addTouchAreaPosition(e);
     e.mouse = this;
     this.tell('onMouseUp', e);
@@ -103,7 +121,7 @@ function Mouse(area){
   };
 
   EventHelper.registerListener({
-    element: _area,
+    element: _releaseTarget,
     on: "mouseup",
     callback: function(e){
       _self.onMouseUp(e)
@@ -111,10 +129,50 @@ function Mouse(area){
   });
 
   EventHelper.registerListener({
-    element: _area,
+    element: _releaseTarget,
+    on: "pointerup",
+    callback: function(e){
+      _self.onMouseUp(e)
+    }
+  });
+
+  EventHelper.registerListener({
+    element: _releaseTarget,
+    on: "pointercancel",
+    callback: function(e){
+      _self.onMouseUp(e)
+    }
+  });
+
+  EventHelper.registerListener({
+    element: document,
     on: "touchend",
     callback: function(e){
       _self.onTouchEnd(e)
+    }
+  });
+
+  EventHelper.registerListener({
+    element: document,
+    on: "touchcancel",
+    callback: function(e){
+      _self.onTouchEnd(e)
+    }
+  });
+
+  EventHelper.registerListener({
+    element: _releaseTarget,
+    on: "blur",
+    callback: function(e){
+      _self.onMouseUp(e)
+    }
+  });
+
+  EventHelper.registerListener({
+    element: document,
+    on: "mouseleave",
+    callback: function(e){
+      _self.onMouseUp(e)
     }
   });
 

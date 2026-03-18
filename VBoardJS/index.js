@@ -6,10 +6,11 @@ const fs = require('fs');
 
 //Use this server config to host it locally so you can access the project from other devices
 const server = Hapi.server({
-  port: 3000,
-  // Get this IP address by running "ipconfig /all" in a command prompt (windows) and paste in your IPv4 address
-  // Try not to commit changes to this config.
-  host: '10.0.0.195'
+  port: process.env.PORT || 3000,
+  host: process.env.HOST || '0.0.0.0',
+  routes: {
+    cors: true
+  }
 });
 // const server = Hapi.server({
 //     port: 3000,
@@ -33,10 +34,18 @@ const init = async () =>{
   });
 
   server.route({
-    method: 'POST',
+    method: 'GET',
     path: '/analyze',
     handler: async (request, h) =>{
-      return await tree.query(JSON.parse(request.payload).letters);
+      const letters = request.query && typeof request.query.letters === 'string'
+        ? request.query.letters.trim()
+        : '';
+
+      if (!letters) {
+        return h.response({ error: 'Missing letters payload' }).code(400);
+      }
+
+      return tree.query(letters);
     }
   });
 
